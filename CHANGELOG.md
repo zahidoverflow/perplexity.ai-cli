@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-08-17
+
+### 🎨 Major Interactive UI/UX Overhaul - Gemini-CLI Inspired
+
+#### ✨ Beautiful ASCII Art Banner
+- **PERPLEXITY ASCII Logo**: Stunning startup banner with proper branding
+- **Professional Welcome**: Clean introduction with version and feature highlights
+- **Getting Started Tips**: Helpful onboarding for new users
+
+#### 🚀 Modern Input System
+- **Enter-to-Send**: Press Enter once to send questions (developer-friendly)
+- **Smart Newlines**: Use `\\n` at end of line for multiline input
+- **Elegant Input Boxes**: Bordered input areas with modern styling
+- **Clean Visual Design**: Professional prompt indicators and formatting
+
+#### 💫 Enhanced User Experience
+- **Double Ctrl+C Exit**: Safe exit with warning message (prevents accidental exits)
+- **5-Second Exit Window**: Smart timeout for exit confirmation
+- **Progress Message Clearing**: Clean response display without search clutter
+- **Streaming Response**: Improved typing animation with better pacing
+- **Professional Formatting**: Clean separators and visual hierarchy
+
+#### 🛠️ Terminal UI Improvements
+- **Dynamic Message Clearing**: Progress indicators vanish when response appears
+- **Better Color Scheme**: Enhanced purple/aqua theme throughout
+- **Responsive Design**: Proper text wrapping and spacing
+- **Signal Handling**: Graceful Ctrl+C management with proper cleanup
+
+#### 🎯 Interactive Commands Enhanced
+- **Improved /help**: Better formatting with tips and shortcuts
+- **Enhanced /refs**: Cleaner reference display with better truncation
+- **Smart Error Messages**: More helpful error handling with recovery tips
+- **Consistent Styling**: All commands follow the same visual patterns
+
+### 🔧 Technical Improvements
+- **Terminal Control**: Advanced escape sequences for line clearing
+- **Input Handling**: Custom multiline input with special key combinations
+- **Threading**: Proper cleanup of background processes
+- **Memory Management**: Better resource handling for long sessions
+
 ## [2.2.0] - 2025-08-17
 
 ### 🌟 Enhanced Interactive Experience - Gemini-CLI Inspired
