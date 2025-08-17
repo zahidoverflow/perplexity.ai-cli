@@ -26,68 +26,32 @@ An enhanced command-line interface for interacting with [Perplexity AI](https://
 - 🌍 **Cross-Platform**: Works on Windows, macOS, and Linux
 - 📦 **pipx Ready**: Optimized for isolated CLI tool installation
 
-## 🚀 Installation
-
-### Method 1: pipx (Recommended) 🌟
+## 🚀 Installation Method
 
 **pipx** is the best way to install Python CLI tools in isolated environments:
 
 ```bash
-# Quick install with our installer script
-curl -sSL https://raw.githubusercontent.com/zahidoverflow/perplexity-cli/main/install.py | python3
-
-# Or manual pipx installation:
 pipx install git+https://github.com/zahidoverflow/perplexity-cli.git
-
-# Usage (available globally)
-perplexity-cli
-pplx  # Short alias
 ```
 
-### Method 2: One-Line Installer
 
-```bash
-# Cross-platform installer (handles pipx setup automatically)
-python3 -c "import urllib.request; exec(urllib.request.urlopen('https://raw.githubusercontent.com/zahidoverflow/perplexity-cli/main/install.py').read())"
-```
-
-### Method 3: Manual pip install
-
-```bash
-# Install directly with pip (less recommended for CLI tools)
-pip install git+https://github.com/zahidoverflow/perplexity-cli.git
-
-# For development/editable install
-git clone https://github.com/zahidoverflow/perplexity-cli.git
-cd perplexity-cli
-pip install -e .
-```
-
-### Method 4: Direct Download
-
-```bash
-# Download and run directly (no installation)
-curl -O https://raw.githubusercontent.com/zahidoverflow/perplexity-cli/main/perplexity_cli.py
-pip install websocket-client requests
-python3 perplexity_cli.py
-```
 
 ## 🔧 First-time Setup
 
 If you don't have pipx installed, our installer will set it up automatically. Or install pipx manually:
 
 ```bash
-# macOS
-brew install pipx
+# Windows
+pip install --user pipx
 
-# Ubuntu/Debian
+# Linux (Ubuntu/Debian)
 sudo apt install pipx
 
 # Other Linux
 pip install --user pipx
 
-# Windows
-pip install --user pipx
+# macOS
+brew install pipx
 
 # Then ensure PATH is configured
 pipx ensurepath
@@ -99,22 +63,6 @@ pipx ensurepath
 
 ```bash
 $ perplexity-cli
-# or
-$ pplx
-
-┌─────────────────────────────────────────────┐
-│ 🤖 Perplexity AI CLI v2.2.0               │
-│ Interactive mode with web search powered AI │
-└─────────────────────────────────────────────┘
-
-💡 Quick Start:
-  • Type your question and press Enter twice
-  • Use /help for commands
-  • Press Ctrl+C to exit
-
-❯ What is artificial intelligence?
-
-[Type your question and press Enter twice to send]
 ```
 
 ### Enhanced Interactive Commands
@@ -132,44 +80,11 @@ $ pplx
 ```bash
 # Ask a quick question
 perplexity-cli "What is quantum computing?"
+# or
 pplx "How does machine learning work?"
 
 # Multi-word questions (quotes recommended)
 perplexity-cli "Explain the difference between AI and ML"
-```
-
-### Example Session
-
-```bash
-$ pplx
-┌─────────────────────────────────────────────┐
-│ 🤖 Perplexity AI CLI v2.2.0               │
-│ Interactive mode with web search powered AI │
-└─────────────────────────────────────────────┘
-
-❯ What are the benefits of renewable energy?
-
-🔍 Searching the web...
-✅ Found answer from 8 sources
-
-🤖 Response #1:
-────────────────────────────────────────────────────────────
-Renewable energy offers numerous benefits including environmental 
-protection through reduced greenhouse gas emissions, energy security 
-through domestic resource utilization, economic advantages via job 
-creation and stable pricing...
-
-📎 8 web sources used • Type /refs to view
-
-[2] ❯ /refs
-
-📚 REFERENCES FROM LAST ANSWER:
-──────────────────────────────────────────────────
-[1] Renewable Energy Benefits
-    https://www.irena.org/benefits
-[2] Environmental Impact of Renewables  
-    https://www.epa.gov/renewable-energy
-...
 ```
 
 ### Command Options
@@ -180,15 +95,6 @@ perplexity-cli --help       # Show help message
 pplx -v                     # Version (short alias)
 pplx -h                     # Help (short alias)
 ```
-
-## ✨ Why pipx?
-
-- 🔒 **Isolated Environment**: No dependency conflicts with system Python or other packages
-- 🌍 **Global Access**: Commands available system-wide after installation  
-- 🧹 **Clean Management**: Easy installation, updates, and removal
-- 🚀 **CLI-Optimized**: Specifically designed for command-line applications
-- 🔄 **Easy Updates**: `pipx upgrade perplexity-cli`
-- 💾 **Disk Efficient**: Each app in its own virtual environment
 
 ## 📋 Requirements
 
@@ -294,6 +200,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Original implementation inspired by [HelpingAI](https://github.com/HelpingAI/Helpingai_T2)
 - [Perplexity AI](https://www.perplexity.ai/) for providing the API
 - Contributors and users who helped improve this tool
+
+## Vibecoding Note
+
+This project was built with the assistance of Gemini, an AI developed by Google. As an independent security researcher, I used AI to accelerate development and learn best practices, but I have reviewed and understood the code to ensure it aligns with my skills and goals. This demonstrates my ability to leverage modern tools while building practical cybersecurity solutions.
 
 ## Disclaimer
 
