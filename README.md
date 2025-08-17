@@ -10,9 +10,7 @@ An enhanced command-line interface for interacting with [Perplexity AI](https://
 > **Enhanced Version (v2.2.0)** with gemini-cli inspired interactive experience, modern UI, and superior usability.
 
 <div align="center">
-  ## 🎬 Demo
-
-  <img src="pplx-ai.png" width="500" alt="Perplexity AI CLI Demo">
+  <img src="pplx-ai.png" width="100%" alt="Perplexity AI CLI Demo">
 </div>
 
 ## ✨ Features
