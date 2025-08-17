@@ -2,12 +2,12 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://python.org)
-[![Version](https://img.shields.io/badge/version-2.1.0-green.svg)](https://github.com/zahidoverflow/perplexity-cli)
+[![Version](https://img.shields.io/badge/version-2.2.0-green.svg)](https://github.com/zahidoverflow/perplexity-cli)
 [![pipx](https://img.shields.io/badge/pipx-recommended-blue.svg)](https://pypa.github.io/pipx/)
 
 An enhanced command-line interface for interacting with [Perplexity AI](https://www.perplexity.ai/) directly from your terminal.
 
-> **Enhanced Version (v2.1.0)** with significant improvements, pipx support, and cross-platform compatibility.
+> **Enhanced Version (v2.2.0)** with gemini-cli inspired interactive experience, modern UI, and superior usability.
 
 <div align="center">
   ## 🎬 Demo
@@ -17,10 +17,13 @@ An enhanced command-line interface for interacting with [Perplexity AI](https://
 
 ## ✨ Features
 
-- 🚀 **Interactive Mode**: Multi-line question support with streaming responses
+- 🚀 **Enhanced Interactive Mode**: Gemini-CLI inspired interface with modern UX
+- 💬 **Smart Conversations**: Press Enter twice to send, conversation numbering  
+- 🎨 **Beautiful Interface**: Bordered welcome, progress spinners, formatted responses
 - ⚡ **Quick Query**: Single-line questions for immediate answers  
-- 📚 **References**: Access web sources used for answers with `$refs`
+- 📚 **Rich References**: Access web sources with `/refs` command
 - 🎨 **Colored Output**: Beautiful terminal formatting with animations
+- 🔗 **Slash Commands**: `/help`, `/clear`, `/refs`, `/quit` for better control
 - 🔒 **Anonymous**: No account required - uses anonymous API access
 - 🌍 **Cross-Platform**: Works on Windows, macOS, and Linux
 - 📦 **pipx Ready**: Optimized for isolated CLI tool installation
@@ -101,13 +104,29 @@ $ perplexity-cli
 # or
 $ pplx
 
-🤖 Perplexity AI CLI v2.1.0
-Enter/Paste your content. Press Ctrl+D on a blank line to send it.
-To check references from last response, type `$refs`.
-Press Ctrl+C to quit.
+┌─────────────────────────────────────────────┐
+│ 🤖 Perplexity AI CLI v2.2.0               │
+│ Interactive mode with web search powered AI │
+└─────────────────────────────────────────────┘
+
+💡 Quick Start:
+  • Type your question and press Enter twice
+  • Use /help for commands
+  • Press Ctrl+C to exit
 
 ❯ What is artificial intelligence?
-[Type your question and press Ctrl+D]
+
+[Type your question and press Enter twice to send]
+```
+
+### Enhanced Interactive Commands
+
+```bash
+/help      # Show all interactive commands
+/clear     # Clear the terminal screen
+/refs      # Show references from last answer
+/quit      # Exit gracefully  
+/version   # Show version info
 ```
 
 ### Quick Query Mode
@@ -123,22 +142,36 @@ perplexity-cli "Explain the difference between AI and ML"
 
 ### Example Session
 
-```
+```bash
 $ pplx
-🤖 Perplexity AI CLI v2.1.0
+┌─────────────────────────────────────────────┐
+│ 🤖 Perplexity AI CLI v2.2.0               │
+│ Interactive mode with web search powered AI │
+└─────────────────────────────────────────────┘
 
 ❯ What are the benefits of renewable energy?
-🤔 Thinking...
 
-Renewable energy offers numerous benefits including environmental protection 
-through reduced greenhouse gas emissions, energy security through domestic 
-resource utilization, economic advantages via job creation and stable pricing...
+🔍 Searching the web...
+✅ Found answer from 8 sources
 
-❯ $refs
+🤖 Response #1:
+────────────────────────────────────────────────────────────
+Renewable energy offers numerous benefits including environmental 
+protection through reduced greenhouse gas emissions, energy security 
+through domestic resource utilization, economic advantages via job 
+creation and stable pricing...
 
-📚 REFERENCES:
-[^1]: [Renewable Energy Benefits](https://www.irena.org/benefits)  
-[^2]: [Environmental Impact](https://www.epa.gov/renewable-energy)
+📎 8 web sources used • Type /refs to view
+
+[2] ❯ /refs
+
+📚 REFERENCES FROM LAST ANSWER:
+──────────────────────────────────────────────────
+[1] Renewable Energy Benefits
+    https://www.irena.org/benefits
+[2] Environmental Impact of Renewables  
+    https://www.epa.gov/renewable-energy
+...
 ```
 
 ### Command Options

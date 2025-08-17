@@ -5,6 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-08-17
+
+### 🌟 Enhanced Interactive Experience - Gemini-CLI Inspired
+
+#### 🎨 New Interactive Interface
+- **Beautiful Welcome Banner**: Enhanced startup with bordered welcome message
+- **Conversation Numbering**: Clear numbering for each Q&A session
+- **Modern Slash Commands**: Added `/help`, `/clear`, `/refs`, `/quit`, `/version`
+- **Smart Input Handling**: Press Enter twice to send questions (more intuitive)
+- **Enhanced Progress Indicators**: Animated spinner during processing
+- **Better Visual Formatting**: Bordered responses with clear sections
+
+#### 💫 User Experience Improvements
+- **Improved Response Display**: 
+  - Streamlined typing animation (faster, more readable)
+  - Source count indicators
+  - Professional response formatting with separators
+- **Enhanced Reference System**:
+  - Better formatting with numbered sources
+  - URL display for easy access
+  - Smart truncation for long source names
+  - Shows up to 8 references with overflow indication
+- **Better Error Handling**: More helpful error messages with tips
+- **Screen Management**: `/clear` command to clean the terminal
+
+#### 🔧 Interactive Commands
+- `/help` - Show interactive commands and tips
+- `/clear` - Clear the terminal screen  
+- `/refs` - Display references from last answer
+- `/version` - Show version information
+- `/quit` or `/exit` - Graceful exit
+- **Legacy Support**: Old `$refs` command still works
+
+#### 🎯 Enhanced Quick Mode
+- **Better Question Display**: Clear formatting with emojis
+- **Professional Output**: Structured answer display with separators
+- **Source Management**: Shows reference count and truncates long lists
+- **Progress Indicators**: Visual feedback during processing
+
+### 🚀 Technical Improvements
+- **Threading**: Added spinner animation with proper cleanup
+- **Input Validation**: Better handling of empty inputs and commands
+- **Code Organization**: Separated concerns into focused functions
+- **Error Resilience**: Graceful handling of network issues
+
+### 🎨 Visual Enhancements
+- **Consistent Emojis**: Professional emoji usage throughout
+- **Color Coding**: Better use of colors for different types of content
+- **Typography**: Improved spacing and visual hierarchy
+- **Progress Feedback**: Real-time status updates
+
 ## [2.1.1] - 2025-08-17
 
 ### 🧹 Cleanup & Maintenance

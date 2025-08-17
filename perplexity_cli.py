@@ -2,7 +2,7 @@
 """
 Perplexity AI CLI - A command-line interface for Perplexity AI
 
-Version: 2.1.0
+Version: 2.2.0
 Author: zahidoverflow (Enhanced from original by redscorpse)
 Repository: https://github.com/zahidoverflow/perplexity-cli
 License: MIT License
@@ -11,7 +11,7 @@ A powerful command-line tool that brings Perplexity AI's web-search powered
 conversational AI directly to your terminal. Optimized for pipx installation.
 """
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 __author__ = "zahidoverflow"
 __email__ = "imzooel@gmail.com"
 __license__ = "MIT"
@@ -202,58 +202,6 @@ def quick_question():
         print(f"{tColor.red}Error: {e}{tColor.reset}")
 
 
-def main():
-    print(f"{tColor.purple}Welcome to perplexity.ai CLI!{tColor.reset} {tColor.aqua}v2.0.1{tColor.reset}")
-    print("Enter/Paste your content. Enter + Ctrl-D (or Ctrl-Z in windows) to send it.")
-    print("To check the references from last response, type `$refs`.")
-    print()
-
-    prompt = ""
-    references = []
-    
-    while True:
-        try:
-            line = input(f" {tColor.lavand}❯{tColor.reset} ")
-            if line.strip():
-                prompt += line + "\\n"
-            else:
-                # Empty line followed by Ctrl+D will send the prompt
-                pass
-        except EOFError:
-            # Ctrl+D pressed
-            if not prompt.strip():
-                continue
-                
-            prompt = prompt.strip()
-            
-            if "$refs" in prompt:
-                refs = ""
-                for i, ref in enumerate(references):
-                    refs += f"[^{i+1}]: [{ref['name']}]({ref['url']})\\n"
-                print(f"\\nREFERENCES:\\n{refs}")
-                prompt = ""
-                continue
-
-            # Generate a response using the Perplexity AI
-            try:
-                answer_list = list(Perplexity().generate_answer(prompt))
-                answer, references = extract_answer_from_response(answer_list)
-                
-                if answer:
-                    print(tColor.aqua2, end='\\n', flush=True)
-                    for char in answer:
-                        print(char, end='', flush=True)
-                        sleep(0.02)
-                    print(tColor.reset, end='\\n\\n', flush=True)
-                else:
-                    print(f"{tColor.red}No answer received. Try again.{tColor.reset}\\n")
-                    
-            except Exception as e:
-                print(f"{tColor.red}Error: {e}{tColor.reset}\\n")
-            
-            prompt = ""
-
-
 def show_version():
     """Display version information."""
     print(f"{tColor.purple}Perplexity AI CLI{tColor.reset} {tColor.aqua}v{__version__}{tColor.reset}")
@@ -278,9 +226,10 @@ def print_help():
     print("  --help, -h        Show this help message")
     print()
     print(f"{tColor.bold}Interactive Commands:{tColor.reset}")
-    print("  $refs             Show references from last answer")
-    print("  Ctrl+D            Send your question")
-    print("  Ctrl+C            Exit the program")
+    print("  /help             Show interactive commands")
+    print("  /refs             Show references from last answer")
+    print("  /clear            Clear the screen")
+    print("  /quit             Exit the program")
     print()
     print(f"{tColor.bold}Installation:{tColor.reset}")
     print("  pipx install git+https://github.com/zahidoverflow/perplexity-cli.git")
@@ -293,81 +242,202 @@ def print_help():
 def answer_question(question):
     """Answer a single question (non-interactive mode)."""
     try:
-        print(f"{tColor.aqua}Question: {question}{tColor.reset}")
-        print(f"{tColor.aqua}Thinking...{tColor.reset}\n")
+        print(f"{tColor.aqua}🔍 Question: {question}{tColor.reset}")
+        print(f"{tColor.aqua}🔄 Searching the web...{tColor.reset}\n")
         
         answer_list = list(Perplexity().generate_answer(question))
         answer, references = extract_answer_from_response(answer_list)
         
         if answer:
+            print(f"{tColor.bold}🤖 Answer:{tColor.reset}")
+            print(f"{tColor.bold}{'─' * 50}{tColor.reset}")
             print(f"{tColor.aqua2}{answer}{tColor.reset}")
             
             if references:
-                print(f"\n{tColor.bold}References:{tColor.reset}")
+                print(f"\n{tColor.bold}📚 References ({len(references)} sources):{tColor.reset}")
                 for i, ref in enumerate(references[:5]):  # Show max 5 references
-                    print(f"[^{i+1}]: {ref.get('name', 'Unknown')} - {ref.get('url', 'No URL')}")
+                    name = ref.get('name', 'Unknown Source')
+                    url = ref.get('url', 'No URL')
+                    print(f"{tColor.blue}[{i+1}]{tColor.reset} {name}")
+                    print(f"    {url}")
+                if len(references) > 5:
+                    print(f"    {tColor.yellow}... and {len(references)-5} more sources{tColor.reset}")
         else:
-            print(f"{tColor.red}No answer received. Please try again.{tColor.reset}")
+            print(f"{tColor.red}❌ No answer received. Please try again or rephrase your question.{tColor.reset}")
             
     except Exception as e:
-        print(f"{tColor.red}Error: {e}{tColor.reset}")
+        print(f"{tColor.red}💥 Error: {e}{tColor.reset}")
 
 
 def interactive_mode():
-    """Run the CLI in interactive mode."""
-    print(f"{tColor.purple}Welcome to Perplexity AI CLI!{tColor.reset} {tColor.aqua}v{__version__}{tColor.reset}")
-    print("Enter/Paste your content. Press Ctrl+D on a blank line to send it.")
-    print("To check references from last response, type `$refs`.")
-    print("Press Ctrl+C to quit.\n")
+    """Run the CLI in enhanced interactive mode."""
+    # Display welcome banner
+    print(f"\n{tColor.bold}┌─────────────────────────────────────────────┐{tColor.reset}")
+    print(f"{tColor.bold}│{tColor.reset} {tColor.purple}🤖 Perplexity AI CLI{tColor.reset} {tColor.aqua}v{__version__}{tColor.reset} {tColor.bold}              │{tColor.reset}")
+    print(f"{tColor.bold}│{tColor.reset} Interactive mode with web search powered AI {tColor.bold}│{tColor.reset}")
+    print(f"{tColor.bold}└─────────────────────────────────────────────┘{tColor.reset}\n")
+    
+    # Show enhanced usage instructions
+    print(f"{tColor.bold}💡 Quick Start:{tColor.reset}")
+    print(f"  • Type your question and press {tColor.aqua}Enter{tColor.reset} twice")
+    print(f"  • Use {tColor.green}/help{tColor.reset} for commands")
+    print(f"  • Press {tColor.yellow}Ctrl+C{tColor.reset} to exit\n")
 
     prompt = ""
     references = []
+    conversation_count = 0
     
     while True:
         try:
-            line = input(f" {tColor.lavand}❯{tColor.reset} ")
-            if line.strip():
-                prompt += line + "\\n"
+            # Show conversation number for clarity
+            if conversation_count > 0:
+                line = input(f"{tColor.lavand}[{conversation_count+1}] ❯{tColor.reset} ")
             else:
-                # Empty line - continue collecting input
-                pass
+                line = input(f"{tColor.lavand}❯{tColor.reset} ")
+                
+            # Handle special commands
+            if line.strip().startswith('/'):
+                command = line.strip().lower()
+                
+                if command == '/help':
+                    show_interactive_help()
+                    continue
+                elif command == '/clear':
+                    print("\033[2J\033[H")  # Clear screen
+                    print(f"{tColor.green}✨ Screen cleared!{tColor.reset}\n")
+                    continue
+                elif command == '/refs':
+                    show_references(references)
+                    continue
+                elif command == '/quit' or command == '/exit':
+                    print(f"{tColor.yellow}👋 Goodbye!{tColor.reset}")
+                    break
+                elif command == '/version':
+                    show_version()
+                    continue
+                else:
+                    print(f"{tColor.red}❌ Unknown command: {command}{tColor.reset}")
+                    print(f"   Type {tColor.green}/help{tColor.reset} for available commands\n")
+                    continue
+            
+            # Handle regular input
+            if line.strip():
+                prompt += line + " "
+            else:
+                # Empty line - check if we have a complete prompt
+                if prompt.strip():
+                    # Send the prompt
+                    conversation_count += 1
+                    answer, references = process_query(prompt.strip(), conversation_count)
+                    prompt = ""
+                # Continue collecting input if no prompt yet
+                continue
+                
         except EOFError:
-            # Ctrl+D pressed
-            if not prompt.strip():
-                continue
-                
-            prompt = prompt.strip()
-            
-            if "$refs" in prompt:
-                if references:
-                    refs = ""
-                    for i, ref in enumerate(references):
-                        refs += f"[^{i+1}]: [{ref.get('name', 'Unknown')}]({ref.get('url', 'No URL')})\\n"
-                    print(f"\\n{tColor.bold}REFERENCES:{tColor.reset}\\n{refs}")
-                else:
-                    print(f"\\n{tColor.yellow}No references available from last answer.{tColor.reset}\\n")
+            # Handle Ctrl+D gracefully
+            if prompt.strip():
+                conversation_count += 1
+                answer, references = process_query(prompt.strip(), conversation_count)
                 prompt = ""
-                continue
+            continue
+        except KeyboardInterrupt:
+            # Handle Ctrl+C gracefully
+            print(f"\n\n{tColor.yellow}👋 Session ended. Have a great day!{tColor.reset}")
+            break
 
-            # Generate a response using the Perplexity AI
-            try:
-                print(f"{tColor.aqua}Thinking...{tColor.reset}")
-                answer_list = list(Perplexity().generate_answer(prompt))
-                answer, references = extract_answer_from_response(answer_list)
-                
-                if answer:
-                    print(f"{tColor.aqua2}", end='\\n', flush=True)
-                    for char in answer:
-                        print(char, end='', flush=True)
-                        sleep(0.02)
-                    print(f"{tColor.reset}", end='\\n\\n', flush=True)
-                else:
-                    print(f"{tColor.red}No answer received. Try again.{tColor.reset}\\n")
-                    
-            except Exception as e:
-                print(f"{tColor.red}Error: {e}{tColor.reset}\\n")
+
+def show_interactive_help():
+    """Show interactive mode commands."""
+    print(f"\n{tColor.bold}📋 Interactive Commands:{tColor.reset}")
+    print(f"  {tColor.green}/help{tColor.reset}    - Show this help message")
+    print(f"  {tColor.green}/refs{tColor.reset}    - Show references from last answer")
+    print(f"  {tColor.green}/clear{tColor.reset}   - Clear the screen")
+    print(f"  {tColor.green}/version{tColor.reset} - Show version information")
+    print(f"  {tColor.green}/quit{tColor.reset}    - Exit the program")
+    print(f"\n{tColor.bold}💬 Chat Tips:{tColor.reset}")
+    print(f"  • Press {tColor.aqua}Enter{tColor.reset} twice to send your question")
+    print(f"  • Ask follow-up questions naturally")
+    print(f"  • References are saved for each answer")
+    print(f"  • Use {tColor.yellow}Ctrl+C{tColor.reset} to exit anytime\n")
+
+
+def show_references(references):
+    """Display references in a nice format."""
+    if references:
+        print(f"\n{tColor.bold}📚 REFERENCES FROM LAST ANSWER:{tColor.reset}")
+        print(f"{tColor.bold}{'─' * 50}{tColor.reset}")
+        for i, ref in enumerate(references[:8]):  # Show max 8 references
+            name = ref.get('name', 'Unknown Source')[:60]  # Truncate long names
+            url = ref.get('url', 'No URL')
+            print(f"{tColor.aqua}[{i+1:2d}]{tColor.reset} {name}")
+            print(f"     {tColor.blue}{url}{tColor.reset}")
+        if len(references) > 8:
+            print(f"     {tColor.yellow}... and {len(references)-8} more sources{tColor.reset}")
+        print()
+    else:
+        print(f"\n{tColor.yellow}📭 No references available from the last answer.{tColor.reset}")
+        print(f"   Ask a question first to see web sources!\n")
+
+
+def process_query(query, count):
+    """Process a user query and return the response."""
+    print(f"\n{tColor.aqua}🔍 Searching the web...{tColor.reset}")
+    
+    try:
+        # Show a simple progress indicator
+        import threading
+        stop_spinner = threading.Event()
+        spinner_thread = threading.Thread(target=show_spinner, args=(stop_spinner,))
+        spinner_thread.daemon = True
+        spinner_thread.start()
+        
+        answer_list = list(Perplexity().generate_answer(query))
+        stop_spinner.set()
+        spinner_thread.join(timeout=0.1)
+        
+        answer, references = extract_answer_from_response(answer_list)
+        
+        if answer:
+            print(f"\r{tColor.aqua}✅ Found answer from {len(references) if references else 0} sources{tColor.reset}")
+            print(f"\n{tColor.bold}🤖 Response #{count}:{tColor.reset}")
+            print(f"{tColor.bold}{'─' * 60}{tColor.reset}")
             
-            prompt = ""
+            # Stream the response with better formatting
+            print(f"{tColor.aqua2}", end='', flush=True)
+            for i, char in enumerate(answer):
+                print(char, end='', flush=True)
+                if i % 80 == 0 and i > 0:  # Add slight pause every 80 chars for readability
+                    sleep(0.01)
+                else:
+                    sleep(0.005)  # Faster typing effect
+            print(f"{tColor.reset}")
+            
+            # Show reference count
+            if references:
+                print(f"\n{tColor.blue}📎 {len(references)} web sources used • Type {tColor.green}/refs{tColor.reset}{tColor.blue} to view{tColor.reset}")
+            
+            print()  # Extra spacing
+            return answer, references
+        else:
+            print(f"\r{tColor.red}❌ No answer received. Please try rephrasing your question.{tColor.reset}")
+            print(f"   {tColor.yellow}Tip: Try being more specific or check your internet connection{tColor.reset}\n")
+            return None, []
+            
+    except Exception as e:
+        print(f"\r{tColor.red}💥 Error occurred: {str(e)}{tColor.reset}")
+        print(f"   {tColor.yellow}Try again in a moment or rephrase your question{tColor.reset}\n")
+        return None, []
+
+
+def show_spinner(stop_event):
+    """Show a simple spinner while processing."""
+    spinner_chars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+    i = 0
+    while not stop_event.is_set():
+        print(f'\r{tColor.aqua}{spinner_chars[i % len(spinner_chars)]} Processing...{tColor.reset}', end='', flush=True)
+        sleep(0.1)
+        i += 1
+    print('\r' + ' ' * 20 + '\r', end='', flush=True)  # Clear the spinner line
 
 
 def main():
