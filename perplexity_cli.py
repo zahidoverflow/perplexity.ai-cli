@@ -348,11 +348,12 @@ def interactive_mode():
         
         if ctrl_c_count == 1:
             print(f"\r{' ' * 50}\r", end='', flush=True)  # Clear any ^C characters
-            print(f"\n{tColor.yellow}🛑 Press Ctrl+C again to exit{tColor.reset}")
+            print(f"{tColor.yellow}🛑 Press Ctrl+C again to exit.{tColor.reset}")
             print(f"{tColor.lavand}❯{tColor.reset} ", end='', flush=True)
         else:
             print(f"\r{' ' * 80}\r", end='', flush=True)  # Clear the warning message line
             print(f"\r{tColor.yellow}🛑 Session ended. Have a great day!{tColor.reset}")
+            print(f"{tColor.bold}╰──────────────────────────────────────────────────────────────────────────────╯{tColor.reset}")
             sys.exit(0)
     
     # Set up the signal handler
@@ -487,18 +488,15 @@ def process_query(query, count):
             print(f"\033[A\r{' ' * 50}\r\033[B", end='', flush=True)  # Clear empty line and return
             
             # Clean response display without search messages
-            print(f"{tColor.purple}✦{tColor.reset} {tColor.bold}Response{tColor.reset}")
+            print(f" {tColor.purple}✦{tColor.reset} {tColor.bold}Response{tColor.reset}")
             print()
             
             # Stream the response with better formatting
             print(f"  {tColor.aqua2}", end='', flush=True)
             for i, char in enumerate(answer):
                 print(char, end='', flush=True)
-                if i % 80 == 0 and i > 0:  # Add slight pause every 80 chars for readability
-                    sleep(0.01)
-                else:
-                    sleep(0.005)  # Faster typing effect
-            print(f"{tColor.reset}")
+                sleep(0.005)  # Faster typing effect
+            print(f" {tColor.reset}")
             print()
             
             # Show reference count
