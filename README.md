@@ -12,7 +12,7 @@ An enhanced command-line interface for interacting with [Perplexity AI](https://
 <div align="center">
   ## 🎬 Demo
 
-  <img src="pplx-ai.gif" width="500" alt="Perplexity AI CLI Demo">
+  <img src="pplx-ai.png" width="500" alt="Perplexity AI CLI Demo">
 </div>
 
 ## ✨ Features
