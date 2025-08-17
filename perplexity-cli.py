@@ -7,7 +7,7 @@ A command-line interface for interacting with Perplexity AI.
 Author: Fixed and improved by AI Assistant
 Original: Based on HelpingAI's implementation
 License: MIT
-Version: 2.0.0
+Version: 2.0.1
 """
 
 from uuid import uuid4
@@ -196,7 +196,7 @@ def quick_question():
 
 
 def main():
-    print(f"{tColor.purple}Welcome to perplexity.ai CLI!{tColor.reset} {tColor.aqua}v2.0.0{tColor.reset}")
+    print(f"{tColor.purple}Welcome to perplexity.ai CLI!{tColor.reset} {tColor.aqua}v2.0.1{tColor.reset}")
     print("Enter/Paste your content. Enter + Ctrl-D (or Ctrl-Z in windows) to send it.")
     print("To check the references from last response, type `$refs`.")
     print()
@@ -248,10 +248,10 @@ def main():
 
 
 def show_version():
-    print(f"{tColor.purple}Perplexity AI CLI{tColor.reset} {tColor.aqua}v2.0.0{tColor.reset}")
+    print(f"{tColor.purple}Perplexity AI CLI{tColor.reset} {tColor.aqua}v2.0.1{tColor.reset}")
     print("A command-line interface for Perplexity AI")
     print("License: MIT")
-    print("Repository: https://github.com/zahidoverflow/perplexity.ai-cli")
+    print("Repository: https://github.com/zahidoverflow/perplexity-cli")
 
 
 if __name__ == "__main__":

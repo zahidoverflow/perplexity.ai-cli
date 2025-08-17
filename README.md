@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
-[![Version](https://img.shields.io/badge/version-2.0.0-green.svg)](https://github.com/zahidoverflow/perplexity.ai-cli)
+[![Version](https://img.shields.io/badge/version-2.0.1-green.svg)](https://github.com/zahidoverflow/perplexity-cli)
 
 An enhanced command-line interface for interacting with [Perplexity AI](https://www.perplexity.ai/) directly from your terminal.
 
@@ -26,8 +26,8 @@ An enhanced command-line interface for interacting with [Perplexity AI](https://
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/redscorpse/perplexity.ai-cli.git
-   cd perplexity.ai-cli
+   git clone https://github.com/zahidoverflow/perplexity-cli.git
+   cd perplexity-cli
    ```
 
 2. Run the installation script:
@@ -46,8 +46,8 @@ An enhanced command-line interface for interacting with [Perplexity AI](https://
 
 1. Clone and enter the repository:
    ```bash
-   git clone https://github.com/redscorpse/perplexity.ai-cli.git
-   cd perplexity.ai-cli
+   git clone https://github.com/zahidoverflow/perplexity-cli.git
+   cd perplexity-cli
    ```
 
 2. Create and activate a virtual environment:
@@ -69,7 +69,7 @@ Start the interactive CLI:
 ```bash
 perplexity-cli  # if installed via script
 # or
-source ppl-ai-venv/bin/activate && python3 perplexity.ai-cli.py
+source ppl-ai-venv/bin/activate && python3 perplexity-cli.py
 ```
 
 **How to use:**
@@ -84,7 +84,7 @@ For single questions:
 ```bash
 perplexity-cli "What is quantum computing?"
 # or
-source ppl-ai-venv/bin/activate && python3 perplexity.ai-cli.py "What is quantum computing?"
+source ppl-ai-venv/bin/activate && python3 perplexity-cli.py "What is quantum computing?"
 ```
 
 ### Example Session
