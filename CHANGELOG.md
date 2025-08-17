@@ -10,11 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🧹 Cleanup & Maintenance
 
 #### Project Structure Improvements
-- **Author Information**: Updated all author references to `zahidoverflow` with `imzooel@gmail.com`
 - **File Cleanup**: Removed unnecessary files and build artifacts
   - Removed `PROJECT_COMPLETE.md` (development summary file)
   - Removed `install.sh` (replaced by `install.py`)
-  - Removed `ppl-ai-venv/` (virtual environment directory)
+  - Removed `pplx-ai-venv/` (virtual environment directory)
   - Removed build artifacts (`build/`, `dist/`, `*.egg-info/`)
 - **Enhanced .gitignore**: Comprehensive Python project gitignore
   - Added Python build artifacts, virtual environments, IDE files

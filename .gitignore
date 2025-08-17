@@ -22,7 +22,7 @@ wheels/
 MANIFEST
 
 # Virtual environments
-ppl-ai-venv/
+pplx-ai-venv/
 venv/
 env/
 ENV/

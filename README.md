@@ -10,7 +10,9 @@ An enhanced command-line interface for interacting with [Perplexity AI](https://
 > **Enhanced Version (v2.1.0)** with significant improvements, pipx support, and cross-platform compatibility.
 
 <div align="center">
-  <img src="ppl-ai.gif" width="500" alt="Perplexity AI CLI Demo">
+  ## 🎬 Demo
+
+  <img src="pplx-ai.gif" width="500" alt="Perplexity AI CLI Demo">
 </div>
 
 ## ✨ Features
