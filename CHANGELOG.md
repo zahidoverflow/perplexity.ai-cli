@@ -5,6 +5,96 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2025-08-17
+
+### 🧹 Cleanup & Maintenance
+
+#### Project Structure Improvements
+- **Author Information**: Updated all author references to `zahidoverflow` with `imzooel@gmail.com`
+- **File Cleanup**: Removed unnecessary files and build artifacts
+  - Removed `PROJECT_COMPLETE.md` (development summary file)
+  - Removed `install.sh` (replaced by `install.py`)
+  - Removed `ppl-ai-venv/` (virtual environment directory)
+  - Removed build artifacts (`build/`, `dist/`, `*.egg-info/`)
+- **Enhanced .gitignore**: Comprehensive Python project gitignore
+  - Added Python build artifacts, virtual environments, IDE files
+  - Added OS-specific files (`.DS_Store`, `Thumbs.db`)
+  - Maintained legacy file exclusions
+
+#### Package Configuration
+- **MANIFEST.in**: Simplified and fixed package inclusion rules
+  - Properly includes demo GIF for documentation
+  - Excludes development and build files
+- **Consistent Metadata**: All package files now have correct author information
+- **Clean Dependencies**: Verified all required files are properly included
+
+#### Quality Assurance
+- ✅ **Installation Tested**: `pipx install .` works perfectly
+- ✅ **Global Commands**: Both `perplexity-cli` and `pplx` available globally
+- ✅ **Functionality**: All features working (`--version`, `--help`, quick questions)
+- ✅ **Package Reinstall**: Clean reinstallation process verified
+
+### 🎯 Result
+- **Lean Project Structure**: Only essential files remain
+- **Professional Package**: Ready for distribution and user installation
+- **Consistent Branding**: All references use correct author information
+- **Optimized Build**: Faster installs with smaller package size
+
+## [2.1.0] - 2025-08-17
+
+### 🚀 Added - Cross-Platform pipx Installation
+
+#### New Installation System
+- **pipx Support**: Optimized for pipx installation (recommended for CLI tools)
+- **Cross-Platform Installer**: New `install.py` script works on Windows, macOS, and Linux
+- **Multiple Installation Methods**: pipx, pip, direct download, and one-liner options
+- **Automatic pipx Setup**: Installer handles pipx installation and PATH configuration
+
+#### Enhanced CLI Experience  
+- **Dual Commands**: `perplexity-cli` and `pplx` (short alias) both available globally
+- **Improved Help System**: `--help` flag with comprehensive usage information
+- **Better Version Display**: Enhanced `--version` output with repository links
+- **Robust Error Handling**: Better error messages and graceful failure handling
+
+#### Modern Python Packaging
+- **setup.py**: Professional package configuration for pip/pipx compatibility
+- **pyproject.toml**: Modern Python packaging standard support
+- **MANIFEST.in**: Proper package file inclusion rules
+- **Console Scripts**: Proper entry points for global command availability
+
+### 🔄 Changed
+- **Main Script**: Renamed `perplexity-cli.py` → `perplexity_cli.py` (Python package convention)
+- **Installation Process**: Simplified from complex bash script to one-command install
+- **Documentation**: Complete README rewrite focusing on pipx installation
+- **Version Scheme**: Updated to 2.1.0 reflecting new packaging capabilities
+
+### ✨ Improved
+- **User Experience**: One-command installation across all platforms
+- **Dependency Management**: Automatic handling via pip/pipx
+- **PATH Management**: No manual PATH setup required
+- **Isolation**: Apps installed in isolated environments (via pipx)
+- **Updates**: Easy updates with `pipx upgrade perplexity-cli`
+- **Removal**: Clean uninstall with `pipx uninstall perplexity-cli`
+
+### 🎯 Why pipx?
+- **🔒 Isolation**: No dependency conflicts with system Python
+- **🌍 Global Access**: Commands work from anywhere after installation
+- **🧹 Clean Management**: Easy updates and removal
+- **🚀 CLI-Optimized**: Purpose-built for command-line applications
+- **📦 Industry Standard**: Used by major Python CLI tools
+
+### 💡 Breaking Changes
+- Installation method changed (old `install.sh` deprecated)
+- Main script renamed (affects direct usage only, not installed commands)
+- Requires Python 3.7+ (was 3.8+ in previous version)
+
+### 🔧 Technical Improvements
+- Modern packaging with setup.py and pyproject.toml
+- Proper console script entry points
+- Cross-platform compatibility testing
+- Enhanced error handling and user feedback
+- Automated GitHub connectivity checks
+
 ## [2.0.1] - 2025-08-17
 
 ### 🔄 Changed

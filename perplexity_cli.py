@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
 """
-Perplexity AI CLI
+Perplexity AI CLI - A command-line interface for Perplexity AI
 
-A command-line interface for interacting with Perplexity AI.
+Version: 2.1.0
+Author: zahidoverflow (Enhanced from original by redscorpse)
+Repository: https://github.com/zahidoverflow/perplexity-cli
+License: MIT License
 
-Author: Fixed and improved by AI Assistant
-Original: Based on HelpingAI's implementation
-License: MIT
-Version: 2.0.1
+A powerful command-line tool that brings Perplexity AI's web-search powered
+conversational AI directly to your terminal. Optimized for pipx installation.
 """
+
+__version__ = "2.1.0"
+__author__ = "zahidoverflow"
+__email__ = "imzooel@gmail.com"
+__license__ = "MIT"
+__url__ = "https://github.com/zahidoverflow/perplexity-cli"
 
 from uuid import uuid4
 from time import sleep, time
@@ -248,25 +255,146 @@ def main():
 
 
 def show_version():
-    print(f"{tColor.purple}Perplexity AI CLI{tColor.reset} {tColor.aqua}v2.0.1{tColor.reset}")
+    """Display version information."""
+    print(f"{tColor.purple}Perplexity AI CLI{tColor.reset} {tColor.aqua}v{__version__}{tColor.reset}")
     print("A command-line interface for Perplexity AI")
-    print("License: MIT")
-    print("Repository: https://github.com/zahidoverflow/perplexity-cli")
+    print(f"License: {__license__}")
+    print(f"Repository: {__url__}")
+
+
+def print_help():
+    """Display help information."""
+    print(f"{tColor.purple}Perplexity AI CLI{tColor.reset} {tColor.aqua}v{__version__}{tColor.reset}")
+    print("A command-line interface for Perplexity AI with web search capabilities")
+    print()
+    print(f"{tColor.bold}Usage:{tColor.reset}")
+    print("  perplexity-cli                    # Interactive mode")
+    print("  pplx                              # Short alias (interactive)")
+    print("  perplexity-cli 'your question'   # Quick question")
+    print("  pplx 'your question'             # Short alias (quick question)")
+    print()
+    print(f"{tColor.bold}Options:{tColor.reset}")
+    print("  --version, -v     Show version information")
+    print("  --help, -h        Show this help message")
+    print()
+    print(f"{tColor.bold}Interactive Commands:{tColor.reset}")
+    print("  $refs             Show references from last answer")
+    print("  Ctrl+D            Send your question")
+    print("  Ctrl+C            Exit the program")
+    print()
+    print(f"{tColor.bold}Installation:{tColor.reset}")
+    print("  pipx install git+https://github.com/zahidoverflow/perplexity-cli.git")
+    print()
+    print(f"{tColor.bold}Examples:{tColor.reset}")
+    print("  perplexity-cli 'What is quantum computing?'")
+    print("  pplx 'How does AI work?'")
+
+
+def answer_question(question):
+    """Answer a single question (non-interactive mode)."""
+    try:
+        print(f"{tColor.aqua}Question: {question}{tColor.reset}")
+        print(f"{tColor.aqua}Thinking...{tColor.reset}\n")
+        
+        answer_list = list(Perplexity().generate_answer(question))
+        answer, references = extract_answer_from_response(answer_list)
+        
+        if answer:
+            print(f"{tColor.aqua2}{answer}{tColor.reset}")
+            
+            if references:
+                print(f"\n{tColor.bold}References:{tColor.reset}")
+                for i, ref in enumerate(references[:5]):  # Show max 5 references
+                    print(f"[^{i+1}]: {ref.get('name', 'Unknown')} - {ref.get('url', 'No URL')}")
+        else:
+            print(f"{tColor.red}No answer received. Please try again.{tColor.reset}")
+            
+    except Exception as e:
+        print(f"{tColor.red}Error: {e}{tColor.reset}")
+
+
+def interactive_mode():
+    """Run the CLI in interactive mode."""
+    print(f"{tColor.purple}Welcome to Perplexity AI CLI!{tColor.reset} {tColor.aqua}v{__version__}{tColor.reset}")
+    print("Enter/Paste your content. Press Ctrl+D on a blank line to send it.")
+    print("To check references from last response, type `$refs`.")
+    print("Press Ctrl+C to quit.\n")
+
+    prompt = ""
+    references = []
+    
+    while True:
+        try:
+            line = input(f" {tColor.lavand}❯{tColor.reset} ")
+            if line.strip():
+                prompt += line + "\\n"
+            else:
+                # Empty line - continue collecting input
+                pass
+        except EOFError:
+            # Ctrl+D pressed
+            if not prompt.strip():
+                continue
+                
+            prompt = prompt.strip()
+            
+            if "$refs" in prompt:
+                if references:
+                    refs = ""
+                    for i, ref in enumerate(references):
+                        refs += f"[^{i+1}]: [{ref.get('name', 'Unknown')}]({ref.get('url', 'No URL')})\\n"
+                    print(f"\\n{tColor.bold}REFERENCES:{tColor.reset}\\n{refs}")
+                else:
+                    print(f"\\n{tColor.yellow}No references available from last answer.{tColor.reset}\\n")
+                prompt = ""
+                continue
+
+            # Generate a response using the Perplexity AI
+            try:
+                print(f"{tColor.aqua}Thinking...{tColor.reset}")
+                answer_list = list(Perplexity().generate_answer(prompt))
+                answer, references = extract_answer_from_response(answer_list)
+                
+                if answer:
+                    print(f"{tColor.aqua2}", end='\\n', flush=True)
+                    for char in answer:
+                        print(char, end='', flush=True)
+                        sleep(0.02)
+                    print(f"{tColor.reset}", end='\\n\\n', flush=True)
+                else:
+                    print(f"{tColor.red}No answer received. Try again.{tColor.reset}\\n")
+                    
+            except Exception as e:
+                print(f"{tColor.red}Error: {e}{tColor.reset}\\n")
+            
+            prompt = ""
+
+
+def main():
+    """Main entry point for the CLI application."""
+    try:
+        # Check for version flags
+        if len(sys.argv) > 1:
+            arg = sys.argv[1].lower()
+            if arg in ['--version', '-v', 'version']:
+                show_version()
+                return
+            elif arg in ['--help', '-h', 'help']:
+                print_help()
+                return
+            else:
+                # Single question mode - join all arguments
+                question = ' '.join(sys.argv[1:])
+                answer_question(question)
+                return
+        
+        # Interactive mode
+        interactive_mode()
+    except KeyboardInterrupt:
+        print(f"\\n\\n{tColor.red}Goodbye!{tColor.reset}")
+    except Exception as e:
+        print(f"\\n{tColor.red}Unexpected error: {e}{tColor.reset}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        try:
-            main()
-        except KeyboardInterrupt:
-            exit(f"\\n\\n{tColor.red}Aborting!{tColor.reset}")
-    elif len(sys.argv) == 2:
-        if sys.argv[1] in ['-v', '--version', 'version']:
-            show_version()
-        else:
-            quick_question()
-    else:
-        print(f"{tColor.red}Usage:{tColor.reset}")
-        print(f"  {sys.argv[0]}                    # Interactive mode")
-        print(f"  {sys.argv[0]} \"question\"         # Quick query")
-        print(f"  {sys.argv[0]} --version          # Show version")
+    main()
