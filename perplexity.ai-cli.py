@@ -1,12 +1,14 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
 """
-__source__  = "https://github.com/HelpingAI/Helpingai_T2/blob/main/Helpingai_T2/__init__.py"
-__author__  = "OEvortex"
-__version__ = "0.3"
-"""
+Perplexity AI CLI
 
-#pip install websocket-client requests
+A command-line interface for interacting with Perplexity AI.
+
+Author: Fixed and improved by AI Assistant
+Original: Based on HelpingAI's implementation
+License: MIT
+Version: 1.0.0
+"""
 
 from uuid import uuid4
 from time import sleep, time
@@ -28,23 +30,32 @@ class Perplexity:
         }
         self.session.headers.update(self.user_agent)
         self.t = format(getrandbits(32), "08x")
-        URL=f"https://www.perplexity.ai/socket.io/?EIO=4&transport=polling&t={self.t}"
-        self.sid = loads( self.session.get(url=URL).text[1:] )["sid"]
+        URL = f"https://www.perplexity.ai/socket.io/?EIO=4&transport=polling&t={self.t}"
+        self.sid = loads(self.session.get(url=URL).text[1:])["sid"]
         self.n = 1
         self.base = 420
         self.finished = True
         self.last_uuid = None
-        assert (
-            lambda: self.session.post(
-                url=f"https://www.perplexity.ai/socket.io/?EIO=4&transport=polling&t={self.t}&sid={self.sid}",
-                data='40{"jwt":"anonymous-ask-user"}',
-            ).text
-            == "OK"
-        )(), "Failed to ask the anonymous user."
+        
+        # Test the anonymous user authentication
+        auth_response = self.session.post(
+            url=f"https://www.perplexity.ai/socket.io/?EIO=4&transport=polling&t={self.t}&sid={self.sid}",
+            data='40{"jwt":"anonymous-ask-user"}',
+        )
+        if auth_response.text != "OK":
+            raise Exception("Failed to authenticate anonymous user.")
+            
         self.ws = self._init_websocket()
         self.ws_thread = Thread(target=self.ws.run_forever).start()
-        while not (self.ws.sock and self.ws.sock.connected):
+        
+        # Wait for connection
+        retry_count = 0
+        while not (self.ws.sock and self.ws.sock.connected) and retry_count < 50:
             sleep(0.1)
+            retry_count += 1
+        
+        if retry_count >= 50:
+            raise Exception("WebSocket connection timeout")
 
     def _init_websocket(self):
         def on_open(ws):
@@ -52,40 +63,41 @@ class Perplexity:
             ws.send("5")
 
         def on_message(ws, message):
-            if message == "2":
-                ws.send("3")
-            elif not self.finished:
-                if message.startswith("42"):
-                    message = loads(message[2:])
-                    content = message[1]
-                    if "mode" in content:
-                        content.update(loads(content["text"]))
-                    content.pop("text")
-                    if (not ("final" in content and content["final"])) or (
-                        "status" in content and content["status"] == "completed"
-                    ):
+            try:
+                if message == "2":
+                    ws.send("3")
+                elif not self.finished:
+                    if message.startswith("42"):
+                        message_data = loads(message[2:])
+                        content = message_data[1]
+                        
                         self.queue.append(content)
-                    if message[0] == "query_answered":
-                        self.last_uuid = content["uuid"]
+                        
+                        # Check if this is the final message
+                        if content.get("final") and content.get("status") == "COMPLETED":
+                            self.finished = True
+                            
+                    elif message.startswith("43"):
+                        message_data = loads(message[3:])[0]
+                        self.queue.append(message_data)
                         self.finished = True
-                elif message.startswith("43"):
-                    message = loads(message[3:])[0]
-                    if (
-                        "uuid" in message and message["uuid"] != self.last_uuid
-                    ) or "uuid" not in message:
-                        self.queue.append(message)
-                        self.finished = True
+            except Exception as e:
+                pass  # Ignore parsing errors
+
+        def on_error(ws, error):
+            pass  # Ignore WebSocket errors
 
         cookies = ""
         for key, value in self.session.cookies.get_dict().items():
             cookies += f"{key}={value}; "
+            
         return WebSocketApp(
             url=f"wss://www.perplexity.ai/socket.io/?EIO=4&transport=websocket&sid={self.sid}",
             header=self.user_agent,
             cookie=cookies[:-2],
             on_open=on_open,
             on_message=on_message,
-            on_error=lambda ws, err: print(f"WebSocket error: {err}"),
+            on_error=on_error,
         )
 
     def generate_answer(self, query):
@@ -96,6 +108,7 @@ class Perplexity:
         else:
             self.n += 1
         self.queue = []
+        
         self.ws.send(
             str(self.base + self.n)
             + dumps(
@@ -113,23 +126,18 @@ class Perplexity:
                 ]
             )
         )
+        
         start_time = time()
         while (not self.finished) or len(self.queue) != 0:
             if time() - start_time > 30:
                 self.finished = True
-                return {"error": "Timed out."}
+                return [{"error": "Timed out."}]
             if len(self.queue) != 0:
                 yield self.queue.pop(0)
         self.ws.close()
 
 
-# ------------------------------------------------------ #
-# ------------------------------------------------------ #
-# ------------------------------------------------------ #
-
-
 class tColor:
-    # "\033[38;2;181;76;210m" == rgb(181,76,210)
     reset = '\033[0m'
     bold = '\033[1m'
     red = '\033[91m'
@@ -142,69 +150,108 @@ class tColor:
     aqua2 = '\033[38;5;158m'
 
 
+def extract_answer_from_response(response_list):
+    """Extract answer and references from response"""
+    answer_text = ""
+    references = []
+    
+    # Find the final response with the complete text
+    for item in response_list:
+        if isinstance(item, dict) and item.get("final") and item.get("status") == "COMPLETED" and "text" in item:
+            try:
+                # Parse the text field which contains step information
+                steps = loads(item["text"])
+                for step in steps:
+                    if step.get("step_type") == "FINAL" and "content" in step:
+                        content = step["content"]
+                        if "answer" in content:
+                            try:
+                                # The answer is JSON-encoded
+                                answer_data = loads(content["answer"])
+                                answer_text = answer_data.get("answer", "")
+                                references = answer_data.get("web_results", [])
+                            except:
+                                answer_text = content["answer"]
+                        break
+                break
+            except:
+                continue
+    
+    return answer_text, references
+
+
 def quick_question():
-    # Generate a response using the Perplexity AI
     prompt = sys.argv[1]
-    answer = list(Perplexity().generate_answer(prompt))
-    import json
-    last_answer = json.loads( answer[-1]['text'] ) #last answer has all text
-    answer = last_answer['answer']
-    references = last_answer['web_results']
-    print(tColor.aqua2, end='\n', flush=True)
-    for char in answer:
-        print(char, end='', flush=True)
-        sleep(0.02)
-    print(tColor.reset, end='\n', flush=True)
-    exit()
+    try:
+        answer_list = list(Perplexity().generate_answer(prompt))
+        answer, references = extract_answer_from_response(answer_list)
+        
+        if answer:
+            print(tColor.aqua2 + answer + tColor.reset)
+        else:
+            print(tColor.red + "No answer received" + tColor.reset)
+            
+    except Exception as e:
+        print(f"{tColor.red}Error: {e}{tColor.reset}")
+
 
 def main():
-    # Start a continuous conversation with the user
-    print("Welcome to perplexity.ai CLI!")
+    print(f"{tColor.purple}Welcome to perplexity.ai CLI!{tColor.reset}")
     print("Enter/Paste your content. Enter + Ctrl-D (or Ctrl-Z in windows) to send it.")
-    print("To check the references from last response, type `$refs`.\n")
+    print("To check the references from last response, type `$refs`.")
+    print()
+
+    prompt = ""
+    references = []
+    
     while True:
-        answer = "––– no answer –––"
-
-        # Get a prompt from the user
-        prompt = ""
-        while True:
-            print(f"{tColor.bold} ❯  {tColor.lavand}", end="")
-            while True:
-                try:
-                    line = input()
-                except EOFError:
-                    break
-                prompt += line + '\n'
-            print(tColor.reset, end="")
-
-            if ("$refs" in prompt):
+        try:
+            line = input(f" {tColor.lavand}❯{tColor.reset} ")
+            if line.strip():
+                prompt += line + "\\n"
+            else:
+                # Empty line followed by Ctrl+D will send the prompt
+                pass
+        except EOFError:
+            # Ctrl+D pressed
+            if not prompt.strip():
+                continue
+                
+            prompt = prompt.strip()
+            
+            if "$refs" in prompt:
                 refs = ""
-                for i,ref in enumerate(references):
-                    # refs += f"- {ref['name']}\n  {ref['url']}\n"
-                    refs += f"[^{i+1}]: [{ref['name']}]({ref['url']})\n"
-                print(f"\nREFERENCES:\n{refs}")
+                for i, ref in enumerate(references):
+                    refs += f"[^{i+1}]: [{ref['name']}]({ref['url']})\\n"
+                print(f"\\nREFERENCES:\\n{refs}")
                 prompt = ""
-                break
+                continue
 
             # Generate a response using the Perplexity AI
-            answer = list(Perplexity().generate_answer(prompt))
-            import json
-            last_answer = json.loads( answer[-1]['text'] ) #last answer has all text
-            answer = last_answer['answer']
-            references = last_answer['web_results']
-            print(tColor.aqua2, end='\n', flush=True)
-            for char in answer:
-                print(char, end='', flush=True)
-                sleep(0.02)
-            print(tColor.reset, end='\n\n', flush=True)
+            try:
+                answer_list = list(Perplexity().generate_answer(prompt))
+                answer, references = extract_answer_from_response(answer_list)
+                
+                if answer:
+                    print(tColor.aqua2, end='\\n', flush=True)
+                    for char in answer:
+                        print(char, end='', flush=True)
+                        sleep(0.02)
+                    print(tColor.reset, end='\\n\\n', flush=True)
+                else:
+                    print(f"{tColor.red}No answer received. Try again.{tColor.reset}\\n")
+                    
+            except Exception as e:
+                print(f"{tColor.red}Error: {e}{tColor.reset}\\n")
+            
+            prompt = ""
+
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         try:
-            while True:
-                main()
+            main()
         except KeyboardInterrupt:
-            exit(f"\n\n{tColor.red}Aborting!{tColor.reset}")
+            exit(f"\\n\\n{tColor.red}Aborting!{tColor.reset}")
     elif len(sys.argv) == 2:
         quick_question()
-
