@@ -26,6 +26,8 @@ from websocket import WebSocketApp
 from requests import Session
 import subprocess
 import sys
+import signal
+import readline
 
 
 class Perplexity:
@@ -269,31 +271,124 @@ def answer_question(question):
         print(f"{tColor.red}💥 Error: {e}{tColor.reset}")
 
 
+def get_multiline_input(prompt_text):
+    """Get input with Enter to send, Shift+Enter/Ctrl+Enter for new lines."""
+    import sys
+    import tty
+    import termios
+    
+    print(f"{tColor.bold}╭──────────────────────────────────────────────────────────────────────────────╮{tColor.reset}")
+    print(f"{tColor.bold}│{tColor.reset}  {tColor.aqua}>{tColor.reset} ", end='', flush=True)
+    
+    lines = []
+    current_line = ""
+    
+    # Save terminal settings
+    old_settings = termios.tcgetattr(sys.stdin)
+    
+    try:
+        while True:
+            try:
+                # Use regular input for simplicity - we'll handle Enter logic differently
+                user_input = input()
+                
+                # Check if input ends with special sequence for newline
+                if user_input.endswith('\\n') or user_input.endswith('\\\\'):
+                    # Remove the escape sequence and add as new line
+                    current_line = user_input.rstrip('\\n').rstrip('\\\\')
+                    lines.append(current_line)
+                    current_line = ""
+                    print(f"{tColor.bold}│{tColor.reset}    ", end='', flush=True)  # Continue on next line in box
+                    continue
+                else:
+                    # Regular input - this will be sent
+                    if current_line:
+                        current_line += " " + user_input
+                    else:
+                        current_line = user_input
+                    
+                    if current_line.strip():
+                        lines.append(current_line)
+                        break
+                    
+            except KeyboardInterrupt:
+                raise
+            except EOFError:
+                if current_line.strip():
+                    lines.append(current_line)
+                    break
+                continue
+                
+    finally:
+        # Restore terminal settings
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+    
+    print(f"{tColor.bold}╰──────────────────────────────────────────────────────────────────────────────╯{tColor.reset}")
+    print()
+    
+    return "\\n".join(lines) if lines else ""
+
+
 def interactive_mode():
     """Run the CLI in enhanced interactive mode."""
-    # Display welcome banner
-    print(f"\n{tColor.bold}┌─────────────────────────────────────────────┐{tColor.reset}")
-    print(f"{tColor.bold}│{tColor.reset} {tColor.purple}🤖 Perplexity AI CLI{tColor.reset} {tColor.aqua}v{__version__}{tColor.reset} {tColor.bold}              │{tColor.reset}")
-    print(f"{tColor.bold}│{tColor.reset} Interactive mode with web search powered AI {tColor.bold}│{tColor.reset}")
-    print(f"{tColor.bold}└─────────────────────────────────────────────┘{tColor.reset}\n")
+    # Setup signal handling for cleaner Ctrl+C experience
+    ctrl_c_count = 0
+    last_ctrl_c_time = 0
     
-    # Show enhanced usage instructions
-    print(f"{tColor.bold}💡 Quick Start:{tColor.reset}")
-    print(f"  • Type your question and press {tColor.aqua}Enter{tColor.reset} twice")
-    print(f"  • Use {tColor.green}/help{tColor.reset} for commands")
-    print(f"  • Press {tColor.yellow}Ctrl+C{tColor.reset} to exit\n")
+    def signal_handler(signum, frame):
+        nonlocal ctrl_c_count, last_ctrl_c_time
+        current_time = time()
+        
+        # Reset counter if more than 5 seconds have passed
+        if current_time - last_ctrl_c_time > 5:
+            ctrl_c_count = 0
+        
+        ctrl_c_count += 1
+        last_ctrl_c_time = current_time
+        
+        if ctrl_c_count == 1:
+            print(f"\r{' ' * 50}\r", end='', flush=True)  # Clear any ^C characters
+            print(f"\n{tColor.yellow}🛑 Press Ctrl+C again to exit{tColor.reset}")
+            print(f"{tColor.lavand}❯{tColor.reset} ", end='', flush=True)
+        else:
+            print(f"\r{' ' * 80}\r", end='', flush=True)  # Clear the warning message line
+            print(f"\r{tColor.yellow}🛑 Session ended. Have a great day!{tColor.reset}")
+            sys.exit(0)
+    
+    # Set up the signal handler
+    signal.signal(signal.SIGINT, signal_handler)
+    
+    # Display beautiful ASCII art banner
+    print(f"\n{tColor.purple}")
+    print("██████╗ ███████╗██████╗ ██████╗ ██╗     ███████╗██╗  ██╗██╗████████╗██╗   ██╗")
+    print("██╔══██╗██╔════╝██╔══██╗██╔══██╗██║     ██╔════╝╚██╗██╔╝██║╚══██╔══╝╚██╗ ██╔╝")
+    print("██████╔╝█████╗  ██████╔╝██████╔╝██║     █████╗   ╚███╔╝ ██║   ██║    ╚████╔╝ ")
+    print("██╔═══╝ ██╔══╝  ██╔══██╗██╔═══╝ ██║     ██╔══╝   ██╔██╗ ██║   ██║     ╚██╔╝  ")
+    print("██║     ███████╗██║  ██║██║     ███████╗███████╗██╔╝ ██╗██║   ██║      ██║   ")
+    print("╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝      ╚═╝   ")
+    print(f"{tColor.reset}")
+    
+    print(f"{tColor.aqua}                    🔍 Web-Search Powered AI CLI {tColor.purple}v{__version__}{tColor.reset}")
+    print()
+    
+    # Show tips like gemini-cli
+    print(f"{tColor.bold}Tips for getting started:{tColor.reset}")
+    print(f"1. Ask questions and get web-sourced answers instantly.")
+    print(f"2. Press {tColor.green}Enter{tColor.reset} to send your question.")
+    print(f"3. Use {tColor.yellow}\\\\n{tColor.reset} at the end of line for new lines (advanced).")
+    print(f"4. /help for more commands and information.")
+    print()
 
-    prompt = ""
     references = []
     conversation_count = 0
     
     while True:
         try:
-            # Show conversation number for clarity
-            if conversation_count > 0:
-                line = input(f"{tColor.lavand}[{conversation_count+1}] ❯{tColor.reset} ")
-            else:
-                line = input(f"{tColor.lavand}❯{tColor.reset} ")
+            # Reset Ctrl+C counter on new input
+            ctrl_c_count = 0
+            
+            # Get user input with modern behavior
+            line = get_multiline_input("")
                 
             # Handle special commands
             if line.strip().startswith('/'):
@@ -322,28 +417,15 @@ def interactive_mode():
             
             # Handle regular input
             if line.strip():
-                prompt += line + " "
-            else:
-                # Empty line - check if we have a complete prompt
-                if prompt.strip():
-                    # Send the prompt
-                    conversation_count += 1
-                    answer, references = process_query(prompt.strip(), conversation_count)
-                    prompt = ""
-                # Continue collecting input if no prompt yet
-                continue
+                # Send the prompt immediately
+                conversation_count += 1
+                answer, references = process_query(line.strip(), conversation_count)
                 
         except EOFError:
-            # Handle Ctrl+D gracefully
-            if prompt.strip():
-                conversation_count += 1
-                answer, references = process_query(prompt.strip(), conversation_count)
-                prompt = ""
             continue
         except KeyboardInterrupt:
-            # Handle Ctrl+C gracefully
-            print(f"\n\n{tColor.yellow}👋 Session ended. Have a great day!{tColor.reset}")
-            break
+            # This should not be reached due to signal handler, but keep as fallback
+            continue
 
 
 def show_interactive_help():
@@ -354,11 +436,12 @@ def show_interactive_help():
     print(f"  {tColor.green}/clear{tColor.reset}   - Clear the screen")
     print(f"  {tColor.green}/version{tColor.reset} - Show version information")
     print(f"  {tColor.green}/quit{tColor.reset}    - Exit the program")
-    print(f"\n{tColor.bold}💬 Chat Tips:{tColor.reset}")
-    print(f"  • Press {tColor.aqua}Enter{tColor.reset} twice to send your question")
+    print(f"\n{tColor.bold}💬 Input Tips:{tColor.reset}")
+    print(f"  • Press {tColor.aqua}Enter{tColor.reset} to send your question")
+    print(f"  • Use {tColor.yellow}\\\\n{tColor.reset} at end of line for multiline input")
     print(f"  • Ask follow-up questions naturally")
     print(f"  • References are saved for each answer")
-    print(f"  • Use {tColor.yellow}Ctrl+C{tColor.reset} to exit anytime\n")
+    print(f"  • Press {tColor.yellow}Ctrl+C{tColor.reset} twice (within 5s) to exit safely\n")
 
 
 def show_references(references):
@@ -398,12 +481,17 @@ def process_query(query, count):
         answer, references = extract_answer_from_response(answer_list)
         
         if answer:
-            print(f"\r{tColor.aqua}✅ Found answer from {len(references) if references else 0} sources{tColor.reset}")
-            print(f"\n{tColor.bold}🤖 Response #{count}:{tColor.reset}")
-            print(f"{tColor.bold}{'─' * 60}{tColor.reset}")
+            # Clear the search messages before showing response
+            print(f"\r{' ' * 50}\r", end='', flush=True)  # Clear current line
+            print(f"\033[A\r{' ' * 50}\r", end='', flush=True)  # Clear previous line (Searching...)
+            print(f"\033[A\r{' ' * 50}\r\033[B", end='', flush=True)  # Clear empty line and return
+            
+            # Clean response display without search messages
+            print(f"{tColor.purple}✦{tColor.reset} {tColor.bold}Response{tColor.reset}")
+            print()
             
             # Stream the response with better formatting
-            print(f"{tColor.aqua2}", end='', flush=True)
+            print(f"  {tColor.aqua2}", end='', flush=True)
             for i, char in enumerate(answer):
                 print(char, end='', flush=True)
                 if i % 80 == 0 and i > 0:  # Add slight pause every 80 chars for readability
@@ -411,20 +499,31 @@ def process_query(query, count):
                 else:
                     sleep(0.005)  # Faster typing effect
             print(f"{tColor.reset}")
+            print()
             
             # Show reference count
             if references:
-                print(f"\n{tColor.blue}📎 {len(references)} web sources used • Type {tColor.green}/refs{tColor.reset}{tColor.blue} to view{tColor.reset}")
+                print(f"{tColor.blue}📎 {len(references)} web sources used • Type {tColor.green}/refs{tColor.reset}{tColor.blue} to view{tColor.reset}")
             
             print()  # Extra spacing
             return answer, references
         else:
-            print(f"\r{tColor.red}❌ No answer received. Please try rephrasing your question.{tColor.reset}")
+            # Clear the search messages before showing error
+            print(f"\r{' ' * 50}\r", end='', flush=True)  # Clear current line
+            print(f"\033[A\r{' ' * 50}\r", end='', flush=True)  # Clear previous line (Searching...)
+            print(f"\033[A\r{' ' * 50}\r\033[B", end='', flush=True)  # Clear empty line and return
+            
+            print(f"{tColor.red}❌ No answer received. Please try rephrasing your question.{tColor.reset}")
             print(f"   {tColor.yellow}Tip: Try being more specific or check your internet connection{tColor.reset}\n")
             return None, []
             
     except Exception as e:
-        print(f"\r{tColor.red}💥 Error occurred: {str(e)}{tColor.reset}")
+        # Clear the search messages before showing error
+        print(f"\r{' ' * 50}\r", end='', flush=True)  # Clear current line
+        print(f"\033[A\r{' ' * 50}\r", end='', flush=True)  # Clear previous line (Searching...)
+        print(f"\033[A\r{' ' * 50}\r\033[B", end='', flush=True)  # Clear empty line and return
+        
+        print(f"{tColor.red}💥 Error occurred: {str(e)}{tColor.reset}")
         print(f"   {tColor.yellow}Try again in a moment or rephrase your question{tColor.reset}\n")
         return None, []
 
@@ -461,9 +560,10 @@ def main():
         # Interactive mode
         interactive_mode()
     except KeyboardInterrupt:
-        print(f"\\n\\n{tColor.red}Goodbye!{tColor.reset}")
+        # This handles Ctrl+C in non-interactive modes
+        print(f"\n{tColor.yellow}👋 Goodbye!{tColor.reset}")
     except Exception as e:
-        print(f"\\n{tColor.red}Unexpected error: {e}{tColor.reset}")
+        print(f"\n{tColor.red}Unexpected error: {e}{tColor.reset}")
 
 
 if __name__ == "__main__":
