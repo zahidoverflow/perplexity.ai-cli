@@ -196,7 +196,7 @@ def quick_question():
 
 
 def main():
-    print(f"{tColor.purple}Welcome to perplexity.ai CLI!{tColor.reset}")
+    print(f"{tColor.purple}Welcome to perplexity.ai CLI!{tColor.reset} {tColor.aqua}v1.0.0{tColor.reset}")
     print("Enter/Paste your content. Enter + Ctrl-D (or Ctrl-Z in windows) to send it.")
     print("To check the references from last response, type `$refs`.")
     print()
@@ -247,6 +247,13 @@ def main():
             prompt = ""
 
 
+def show_version():
+    print(f"{tColor.purple}Perplexity AI CLI{tColor.reset} {tColor.aqua}v1.0.0{tColor.reset}")
+    print("A command-line interface for Perplexity AI")
+    print("License: MIT")
+    print("Repository: https://github.com/zahidoverflow/perplexity.ai-cli")
+
+
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         try:
@@ -254,4 +261,12 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             exit(f"\\n\\n{tColor.red}Aborting!{tColor.reset}")
     elif len(sys.argv) == 2:
-        quick_question()
+        if sys.argv[1] in ['-v', '--version', 'version']:
+            show_version()
+        else:
+            quick_question()
+    else:
+        print(f"{tColor.red}Usage:{tColor.reset}")
+        print(f"  {sys.argv[0]}                    # Interactive mode")
+        print(f"  {sys.argv[0]} \"question\"         # Quick query")
+        print(f"  {sys.argv[0]} --version          # Show version")
