@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-08-17
+## [2.0.0] - 2025-08-17
 
-### 🎉 Major Release - Complete Rewrite & Fix
+### 🎉 Major Release - Complete Rewrite & Enhancement of Existing Project
 
-This release represents a complete overhaul of the Perplexity AI CLI with critical bug fixes and major improvements.
+This release represents a complete overhaul and significant enhancement of the original Perplexity AI CLI project with critical bug fixes, major improvements, and new features. Version 2.0.0 reflects the substantial modifications made to the existing codebase.
 
 ### 🚨 Breaking Changes
 - Updated to work with Perplexity's new API response format
@@ -73,15 +73,17 @@ This release represents a complete overhaul of the Perplexity AI CLI with critic
 
 ---
 
-## [0.3] - Previous Version (Before Fixes)
+## [0.3] - Original Version (Before Enhancement)
 
-### Issues in Previous Version
+### Original Project State
 - ❌ WebSocket connection errors
 - ❌ Response parsing failures  
 - ❌ JSON structure incompatibility
 - ❌ Poor error handling
 - ❌ Limited documentation
 - ❌ Installation issues
+
+**Note**: This version represents the state of the original project before the v2.0.0 enhancement.
 
 ---
 

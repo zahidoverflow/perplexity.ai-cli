@@ -2,8 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
+[![Version](https://img.shields.io/badge/version-2.0.0-green.svg)](https://github.com/zahidoverflow/perplexity.ai-cli)
 
-A command-line interface for interacting with [Perplexity AI](https://www.perplexity.ai/) directly from your terminal.
+An enhanced command-line interface for interacting with [Perplexity AI](https://www.perplexity.ai/) directly from your terminal.
+
+> **Note**: This is an enhanced version (v2.0.0) of the original project with significant improvements and bug fixes.
 
 <div align="center">
   <img src="ppl-ai.gif" width="500" alt="Perplexity AI CLI Demo">
